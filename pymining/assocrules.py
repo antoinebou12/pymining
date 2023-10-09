@@ -17,7 +17,7 @@ def mine_assoc_rules(isets: Dict[Set[str], int], min_support: int = 2, min_confi
                 left, right, support, visited, isets,
                 min_support, min_confidence, rules)
 
-    return list(rules)
+    return list(rules)  # convert deque back to list if needed
 
 def add_rule_if_confident(left: Set[str], right: Set[str], rule_support: int, isets: Dict[Set[str], int], min_confidence: float, rules: Deque[Tuple[Set[str], Set[str], int, float]]) -> None:
     support_a = isets[left]

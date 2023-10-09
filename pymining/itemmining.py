@@ -125,7 +125,7 @@ def _sam(sam_input: deque, fis: set, report: Dict[frozenset, int], min_support: 
     return n
 
 
-def get_relim_input(transactions: List[List[Any]], key_func: Optional[Callable[[Any], Any]] = None) -> Tuple[List[Tuple[int, List[Tuple[int, List[Any]]]]], OrderedDict]:
+def _get_relim_input(transactions: List[List[Any]], key_func: Optional[Callable[[Any], Any]] = None) -> Tuple[List[Tuple[int, List[Tuple[int, List[Any]]]]], OrderedDict]:
     i = 0
     l = []
     for key in key_map:

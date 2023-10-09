@@ -17,7 +17,7 @@ class TestPerfTesting(unittest.TestCase):
         self.assertEqual(len(sequences), 4)
         self.assertTrue('caabc' in sequences)
 
-    def test_perftesting.get_random_transactions(self):
+    def test_get_random_transactions(self):
         transactions = perftesting.get_random_transactions(transaction_number=5, max_item_per_transaction=2, universe_size=10)
         self.assertEqual(len(transactions), 5)
         for trans in transactions:
