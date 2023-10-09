@@ -4,10 +4,11 @@ import string
 from pymining.itemmining import _fpgrowth, get_fptree, _relim,\
         get_relim_input, _sam, get_sam_input
 from pymining.compat import range
+from typing import List, Tuple, Optional, Set
 
 
-def get_default_transactions():
-    '''Returns a small list of transactions. For testing purpose.'''
+def get_default_transactions() -> List[Tuple[str, ...]]:
+    """Returns a small list of transactions. For testing purpose."""
     return (
             ('a', 'd'),
             ('a', 'c', 'd', 'e'),
@@ -22,8 +23,8 @@ def get_default_transactions():
             )
 
 
-def get_default_transactions_alt():
-    '''Returns a small list of transactions. For testing purpose.'''
+def get_default_transactions_alt() -> List[Tuple[str, ...]]:
+    """Returns a small list of transactions. For testing purpose."""
     return (
             ('a', 'b'),
             ('b', 'c', 'd'),
@@ -38,15 +39,17 @@ def get_default_transactions_alt():
             )
 
 
-def get_default_sequences():
-    '''Returns a small list of sequences. For testing purpose.'''
+def get_default_sequences() -> Tuple[str, ...]:
+    """Returns a small list of sequences. For testing purpose."""
     return ('caabc', 'abcb', 'cabc', 'abbca')
 
 
 def get_random_transactions(
-        transaction_number=500,
-        max_item_per_transaction=100, max_key_length=50,
-        key_alphabet=string.ascii_letters, universe_size=1000):
+        transaction_number: int = 500,
+        max_item_per_transaction: int = 100, 
+        max_key_length: int = 50,
+        key_alphabet: Optional[str] = string.ascii_letters, 
+        universe_size: int = 1000) -> List[Set[str]]:
     '''Generates a random list of `transaction_number` transactions containing
        from 0 to `max_item_per_transaction` from a collection of
        `universe_size`. Each key has a maximum length of `max_key_length` and
@@ -79,7 +82,8 @@ def get_random_transactions(
     return transactions
 
 
-def test_sam(should_print=False, ts=None, support=2):
+def test_sam(should_print: bool = False, ts: Optional[List[Tuple[str, ...]]] = None, support: int = 2) -> Tuple[int, dict]:
+    """Tests the SAM algorithm."""
     if ts is None:
         ts = get_default_transactions()
     sam_input = get_sam_input(ts, lambda e: e)
@@ -92,7 +96,8 @@ def test_sam(should_print=False, ts=None, support=2):
     return (n, report)
 
 
-def test_relim(should_print=False, ts=None, support=2):
+def test_relim(should_print: bool = False, ts: Optional[List[Tuple[str, ...]]] = None, support: int = 2) -> Tuple[int, dict]:
+    """Tests the Relim algorithm."""
     if ts is None:
         ts = get_default_transactions()
     relim_input = get_relim_input(ts, lambda e: e)
@@ -105,7 +110,8 @@ def test_relim(should_print=False, ts=None, support=2):
     return (n, report)
 
 
-def test_fpgrowth(should_print=False, ts=None, support=2, pruning=False):
+def test_fpgrowth(should_print: bool = False, ts: Optional[List[Tuple[str, ...]]] = None, support: int = 2, pruning: bool = False) -> Tuple[int, dict]:
+    """Tests the FPGrowth algorithm."""
     if ts is None:
         ts = get_default_transactions()
     fptree = get_fptree(ts, lambda e: e, support)
@@ -118,7 +124,7 @@ def test_fpgrowth(should_print=False, ts=None, support=2, pruning=False):
     return (n, report)
 
 
-def test_itemset_perf(perf_round=10, sparse=True, seed=None):
+def test_itemset_perf(perf_round: int = 10, sparse: bool = True, seed: Optional[int] = None) -> None:
     '''Non-scientifically tests the performance of three algorithms by running
        `perf_round` rounds of FP-Growth, FP-Growth without pruning, Relim, and
        SAM.

@@ -1,60 +1,51 @@
 from collections import defaultdict
+from typing import List, Tuple, Set, Dict
 
+def freq_seq_enum(sequences: List[Tuple[str, ...]], min_support: int) -> Set[Tuple[str, ...]]:
+    """Enumerates all frequent sequences.
 
-def freq_seq_enum(sequences, min_support):
-    '''Enumerates all frequent sequences.
+    Args:
+        sequences: A list of sequences (each sequence is a tuple of strings).
+        min_support: The minimum support for a sequence to be considered frequent.
 
-       :param sequences: A sequence of sequences.
-       :param min_support: The minimal support of a set to be included.
-       :rtype: A set of (frequent_sequence, support).
-    '''
+    Returns:
+        A set of frequent sequences.
+    """
     freq_seqs = set()
     _freq_seq(sequences, tuple(), 0, min_support, freq_seqs)
     return freq_seqs
 
-
-def _freq_seq(sdb, prefix, prefix_support, min_support, freq_seqs):
+def _freq_seq(
+    sdb: List[Tuple[str, ...]], 
+    prefix: Tuple[str, ...], 
+    prefix_support: int, 
+    min_support: int, 
+    freq_seqs: Set[Tuple[str, ...]]
+):
     if prefix:
         freq_seqs.add((prefix, prefix_support))
-    locally_frequents = _local_freq_items(sdb, prefix, min_support)
-    if not locally_frequents:
-        return
-    for (item, support) in locally_frequents:
-        new_prefix = prefix + (item,)
-        new_sdb = _project(sdb, new_prefix)
-        _freq_seq(new_sdb, new_prefix, support, min_support, freq_seqs)
-
-
-def _local_freq_items(sdb, prefix, min_support):
-    items = defaultdict(int)
-    freq_items = []
-    for entry in sdb:
-        visited = set()
-        for element in entry:
-            if element not in visited:
-                items[element] += 1
-                visited.add(element)
-    # Sorted is optional. Just useful for debugging for now.
-    for item in items:
-        support = items[item]
+    for item, support in _local_freq_items(sdb, min_support).items():
         if support >= min_support:
-            freq_items.append((item, support))
-    return freq_items
+            new_prefix = prefix + (item,)
+            new_sdb = _project(sdb, new_prefix)
+            _freq_seq(new_sdb, new_prefix, support, min_support, freq_seqs)
 
+def _local_freq_items(sdb: List[Tuple[str, ...]], min_support: int) -> Dict[str, int]:
+    items_count = defaultdict(int)
+    for entry in sdb:
+        for item in set(entry):
+            items_count[item] += 1
+    return {item: support for item, support in items_count.items() if support >= min_support}
 
-def _project(sdb, prefix):
-    new_sdb = []
+def _project(sdb: List[Tuple[str, ...]], prefix: Tuple[str, ...]) -> List[Tuple[str, ...]]:
     if not prefix:
         return sdb
+    new_sdb = []
     current_prefix_item = prefix[-1]
     for entry in sdb:
-        j = 0
-        projection = None
-        for item in entry:
-            if item == current_prefix_item:
-                projection = entry[j + 1:]
-                break
-            j += 1
-        if projection:
-            new_sdb.append(projection)
+        try:
+            index = entry.index(current_prefix_item) + 1
+            new_sdb.append(entry[index:])
+        except ValueError:
+            continue
     return new_sdb

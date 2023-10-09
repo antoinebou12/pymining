@@ -8,7 +8,7 @@ class TestAssocRule(unittest.TestCase):
         ts1 = perftesting.get_default_transactions()
         relim_input = itemmining.get_relim_input(ts1)
         report = itemmining.relim(relim_input, 2)
-        rules = assocrules.mine_assoc_rules(report, min_support=2)
+        rules = mine_assoc_rules(report, min_support=2)
         self.assertEqual(23, len(rules))
 
         a_rule = (frozenset(['b', 'e']), frozenset(['d']), 2, 1.0)
@@ -27,8 +27,7 @@ class TestAssocRule(unittest.TestCase):
         ts1 = perftesting.get_default_transactions()
         relim_input = itemmining.get_relim_input(ts1)
         report = itemmining.relim(relim_input, 2)
-        rules = assocrules.mine_assoc_rules(
-            report, min_support=2, min_confidence=0.75)
+        rules = mine_assoc_rules(report, min_support=2, min_confidence=0.75)
         self.assertEqual(8, len(rules))
 
         a_rule = (frozenset(['b']), frozenset(['d']), 6, 0.75)
@@ -57,3 +56,6 @@ class TestAssocRule(unittest.TestCase):
 
         a_rule = (frozenset(['b', 'c']), frozenset(['a']), 5, 1.0)
         self.assertTrue(a_rule in rules)
+
+if __name__ == '__main__':
+    unittest.main()

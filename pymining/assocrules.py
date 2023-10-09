@@ -1,7 +1,11 @@
-def mine_assoc_rules(isets, min_support=2, min_confidence=0.5):
-    rules = []
-    visited = set()
-    for key in sorted(isets, key=lambda k: len(k), reverse=True):
+from typing import Set, List, Dict, Tuple, Deque
+from collections import deque
+
+def mine_assoc_rules(isets: Dict[Set[str], int], min_support: int = 2, min_confidence: float = 0.5) -> List[Tuple[Set[str], Set[str], int, float]]:
+    rules: Deque[Tuple[Set[str], Set[str], int, float]] = deque()
+    visited: Set[Tuple[Set[str], Set[str]]] = set()
+
+    for key in sorted(isets, key=len, reverse=True):
         support = isets[key]
         if support < min_support or len(key) < 2:
             continue
@@ -13,25 +17,26 @@ def mine_assoc_rules(isets, min_support=2, min_confidence=0.5):
                 left, right, support, visited, isets,
                 min_support, min_confidence, rules)
 
-    return rules
+    return list(rules)  # convert deque back to list if needed
 
-
-def _mine_assoc_rules(
-        left, right, rule_support, visited, isets, min_support,
-        min_confidence, rules):
-    if (left, right) in visited or len(left) < 1:
-        return
-    else:
-        visited.add((left, right))
-
+def add_rule_if_confident(left: Set[str], right: Set[str], rule_support: int, isets: Dict[Set[str], int], min_confidence: float, rules: Deque[Tuple[Set[str], Set[str], int, float]]) -> None:
     support_a = isets[left]
-    confidence = float(rule_support) / float(support_a)
+    confidence = rule_support / float(support_a)
     if confidence >= min_confidence:
         rules.append((left, right, rule_support, confidence))
-        # We can try to increase right!
-        for item in left:
-            new_left = left.difference([item])
-            new_right = right.union([item])
-            _mine_assoc_rules(
-                new_left, new_right, rule_support, visited, isets,
-                min_support, min_confidence, rules)
+
+def _mine_assoc_rules(
+        left: Set[str], right: Set[str], rule_support: int, visited: Set[Tuple[Set[str], Set[str]]], isets: Dict[Set[str], int], min_support: int,
+        min_confidence: float, rules: Deque[Tuple[Set[str], Set[str], int, float]]) -> None:
+    if len(left) < 1 or (left, right) in visited:
+        return
+
+    visited.add((left, right))
+    add_rule_if_confident(left, right, rule_support, isets, min_confidence, rules)
+
+    for item in left:
+        new_left = left.difference([item])
+        new_right = right.union([item])
+        _mine_assoc_rules(
+            new_left, new_right, rule_support, visited, isets,
+            min_support, min_confidence, rules)

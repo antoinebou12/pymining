@@ -1,9 +1,14 @@
 from collections import defaultdict, deque, OrderedDict
+from typing import Any, List, Dict, Tuple, Union, Optional
 
 
 def _sort_transactions_by_freq(
-        transactions, key_func, reverse_int=False,
-        reverse_ext=False, sort_ext=True):
+        transactions: List[List[Any]], 
+        key_func: Callable[[Any], Any],
+        reverse_int: bool = False,
+        reverse_ext: bool = False,
+        sort_ext: bool = True
+        ) -> Tuple[List[Tuple[int, Any]], Dict[Any, int]]:
     key_seqs = [{key_func(i) for i in sequence} for sequence in transactions]
     frequencies = get_frequencies(key_seqs)
 
@@ -22,7 +27,7 @@ def _sort_transactions_by_freq(
     return (asorted_seqs, frequencies)
 
 
-def get_frequencies(transactions):
+def get_frequencies(transactions: List[List[Any]]) -> Dict[Any, int]:
     '''Computes a dictionary, {key:frequencies} containing the frequency of
        each key in all transactions. Duplicate keys in a transaction are
        counted twice.
@@ -36,7 +41,7 @@ def get_frequencies(transactions):
     return frequencies
 
 
-def get_sam_input(transactions, key_func=None):
+def get_sam_input(transactions: List[List[Any]], key_func: Optional[Callable[[Any], Any]] = None) -> deque:
     '''Given a list of transactions and a key function, returns a data
        structure used as the input of the sam algorithm.
 
@@ -67,7 +72,7 @@ def get_sam_input(transactions, key_func=None):
     return sam_input
 
 
-def sam(sam_input, min_support=2):
+def sam(sam_input: deque, min_support: int = 2) -> Dict[frozenset, int]:
     '''Finds frequent item sets of items appearing in a list of transactions
        based on the Split and Merge algorithm by Christian Borgelt.
 
@@ -82,7 +87,7 @@ def sam(sam_input, min_support=2):
     return report
 
 
-def _sam(sam_input, fis, report, min_support):
+def _sam(sam_input: deque, fis: set, report: Dict[frozenset, int], min_support: int):
     n = 0
     a = deque(sam_input)
     while len(a) > 0 and len(a[0][1]) > 0:
@@ -120,7 +125,7 @@ def _sam(sam_input, fis, report, min_support):
     return n
 
 
-def _new_relim_input(size, key_map):
+def get_relim_input(transactions: List[List[Any]], key_func: Optional[Callable[[Any], Any]] = None) -> Tuple[List[Tuple[int, List[Tuple[int, List[Any]]]]], OrderedDict]:
     i = 0
     l = []
     for key in key_map:
