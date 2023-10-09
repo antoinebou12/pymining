@@ -19,10 +19,10 @@ jobs:
         pip install coverage
     - name: Test with unittest
       run: |
-        python -m unittest discover tests
+        python -m unittest discover -p '*_tests.py'
     - name: Generate coverage report
       run: |
-        coverage run -m unittest discover tests  # Run tests with coverage
+        coverage run -m unittest discover -p '*_tests.py'  # Run tests with coverage
         coverage report
         coverage xml
     - name: Generate badge
