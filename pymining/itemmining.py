@@ -1,5 +1,5 @@
 from collections import defaultdict, deque, OrderedDict
-from typing import Any, List, Dict, Tuple, Union, Optional
+from typing import Any, List, Dict, Tuple, Union, Optional, Callable
 
 
 def _sort_transactions_by_freq(
